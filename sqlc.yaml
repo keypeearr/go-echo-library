@@ -1,0 +1,14 @@
+version: "2"
+sql:
+  - engine: "sqlite"
+    schema: "./sql/migrations/"
+    queries: "./sql/queries/"
+    gen:
+      go:
+        out: "src/repositories"
+        package: "repositories"
+        overrides:
+          - db_type: "UUID"
+            go_type:
+              import: "github.com/google/uuid"
+              type: "UUID"
