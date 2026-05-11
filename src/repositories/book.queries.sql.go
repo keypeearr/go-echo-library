@@ -14,6 +14,8 @@ import (
 )
 
 const createBook = `-- name: CreateBook :exec
+;
+
 INSERT INTO books (
     id,
     title,
@@ -69,9 +71,8 @@ func (q *Queries) CreateBook(ctx context.Context, arg CreateBookParams) error {
 }
 
 const deleteBook = `-- name: DeleteBook :exec
-DELETE FROM books
-WHERE
-    id = ?
+delete from books
+where id = ?
 `
 
 func (q *Queries) DeleteBook(ctx context.Context, id uuid.UUID) error {
@@ -80,12 +81,11 @@ func (q *Queries) DeleteBook(ctx context.Context, id uuid.UUID) error {
 }
 
 const getBookById = `-- name: GetBookById :one
-SELECT
-    id, title, author_id, isbn, publisher, published_date, pages, language, genre, description, created_at, updated_at
-FROM
-    books
-WHERE
-    id = ?
+;
+
+select id, title, author_id, isbn, publisher, published_date, pages, language, genre, description, created_at, updated_at
+from books
+where id = ?
 `
 
 func (q *Queries) GetBookById(ctx context.Context, id uuid.UUID) (Book, error) {
@@ -108,15 +108,39 @@ func (q *Queries) GetBookById(ctx context.Context, id uuid.UUID) (Book, error) {
 	return i, err
 }
 
+const getBookByIsbn = `-- name: GetBookByIsbn :one
+;
+
+select id, title, author_id, isbn, publisher, published_date, pages, language, genre, description, created_at, updated_at
+from books
+where isbn = ?
+`
+
+func (q *Queries) GetBookByIsbn(ctx context.Context, isbn string) (Book, error) {
+	row := q.db.QueryRowContext(ctx, getBookByIsbn, isbn)
+	var i Book
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.AuthorID,
+		&i.Isbn,
+		&i.Publisher,
+		&i.PublishedDate,
+		&i.Pages,
+		&i.Language,
+		&i.Genre,
+		&i.Description,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getBooks = `-- name: GetBooks :many
-SELECT
-    id, title, author_id, isbn, publisher, published_date, pages, language, genre, description, created_at, updated_at
-FROM
-    books
-LIMIT
-    ?
-OFFSET
-    ?
+select id, title, author_id, isbn, publisher, published_date, pages, language, genre, description, created_at, updated_at
+from books
+limit ?
+offset ?
 `
 
 type GetBooksParams struct {
@@ -161,16 +185,13 @@ func (q *Queries) GetBooks(ctx context.Context, arg GetBooksParams) ([]Book, err
 }
 
 const getBooksByAuthor = `-- name: GetBooksByAuthor :many
-SELECT
-    id, title, author_id, isbn, publisher, published_date, pages, language, genre, description, created_at, updated_at
-FROM
-    books
-WHERE
-    author_id = ?
-LIMIT
-    ?
-OFFSET
-    ?
+;
+
+select id, title, author_id, isbn, publisher, published_date, pages, language, genre, description, created_at, updated_at
+from books
+where author_id = ?
+limit ?
+offset ?
 `
 
 type GetBooksByAuthorParams struct {
@@ -216,10 +237,10 @@ func (q *Queries) GetBooksByAuthor(ctx context.Context, arg GetBooksByAuthorPara
 }
 
 const getBooksCount = `-- name: GetBooksCount :one
-SELECT
-    COUNT(*)
-FROM
-    books
+;
+
+select count(*)
+from books
 `
 
 func (q *Queries) GetBooksCount(ctx context.Context) (int64, error) {
@@ -230,12 +251,11 @@ func (q *Queries) GetBooksCount(ctx context.Context) (int64, error) {
 }
 
 const getBooksCountByAuthor = `-- name: GetBooksCountByAuthor :one
-SELECT
-    COUNT(*)
-FROM
-    books
-WHERE
-    author_id = ?
+;
+
+select count(*)
+from books
+where author_id = ?
 `
 
 func (q *Queries) GetBooksCountByAuthor(ctx context.Context, authorID uuid.UUID) (int64, error) {

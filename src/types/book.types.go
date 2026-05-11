@@ -40,7 +40,16 @@ type CreateBookRequest struct {
 	Description   *string   `json:"description"`
 }
 
-type UpdateBookRequest struct{}
+type UpdateBookRequest struct {
+	Title         *string    `json:"title"`
+	Isbn          *string    `json:"isbn"`
+	Publisher     *string    `json:"publisher"`
+	PublishedDate *time.Time `json:"published_date"`
+	Pages         *int64     `json:"pages"`
+	Language      *string    `json:"language"`
+	Genre         *string    `json:"genre"`
+	Description   *string    `json:"description"`
+}
 
 type CreateBookResult struct {
 	ID uuid.UUID `json:"id"`

@@ -22,13 +22,17 @@ func Init(e *echo.Echo, db *sql.DB) error {
 	authorRoutes := e.Group(fmt.Sprintf("%s/authors", v1))
 	authorRoutes.GET("", ah.GetAuthors)
 	authorRoutes.POST("", ah.CreateAuthor)
-	authorRoutes.GET("/:id", ah.GetAuthorById)
+	authorRoutes.GET("/:id", ah.GetAuthorByID)
 	authorRoutes.PATCH("/:id", ah.UpdateAuthor)
 	authorRoutes.DELETE("/:id", ah.DeleteAuthor)
 	authorRoutes.GET("/:id/books", ah.GetAuthorBooks)
 
 	bookRoutes := e.Group(fmt.Sprintf("%s/books", v1))
 	bookRoutes.GET("", bh.GetAllBooks)
+	bookRoutes.GET("/:id", bh.GetBookByID)
+	bookRoutes.POST("", bh.CreateBook)
+	bookRoutes.PATCH("/:id", bh.UpdateBook)
+	bookRoutes.DELETE("/:id", bh.DeleteBook)
 
 	return nil
 }

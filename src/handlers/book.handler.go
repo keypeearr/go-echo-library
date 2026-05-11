@@ -32,19 +32,66 @@ func (bh *BookHandler) GetAllBooks(c *echo.Context) error {
 	return utils.SendResponse(c, http.StatusOK, result)
 }
 
+func (bh *BookHandler) GetBookByID(c *echo.Context) error {
+	id, err := utils.ParseUUID(c.Param("id"))
+	if err != nil {
+		return err
+	}
+
+	book, err := bh.bs.GetBookByID(c.Request().Context(), id)
+	if err != nil {
+		return err
+	}
+
+	return utils.SendResponse(c, http.StatusOK, book)
+}
+
 func (bh *BookHandler) CreateBook(c *echo.Context) error {
 	var body types.CreateBookRequest
 	if err := c.Bind(&body); err != nil {
 		return err
 	}
 
-	return nil
+	id, err := bh.bs.CreateBook(c.Request().Context(), body)
+	if err != nil {
+		return err
+	}
+
+	return utils.SendResponse(c, http.StatusCreated, types.CreateBookResult{
+		ID: id,
+	})
 }
 
 func (bh *BookHandler) UpdateBook(c *echo.Context) error {
-	return nil
+	id, err := utils.ParseUUID(c.Param("id"))
+	if err != nil {
+		return err
+	}
+
+	var body types.UpdateBookRequest
+	if err := c.Bind(&body); err != nil {
+		return err
+	}
+
+	book, err := bh.bs.UpdateBook(c.Request().Context(), id, body)
+	if err != nil {
+		return err
+	}
+
+	return utils.SendResponse(c, http.StatusOK, book)
 }
 
 func (bh *BookHandler) DeleteBook(c *echo.Context) error {
-	return nil
+	id, err := utils.ParseUUID(c.Param("id"))
+	if err != nil {
+		return err
+	}
+
+	if err := bh.bs.DeleteBook(c.Request().Context(), id); err != nil {
+		return err
+	}
+
+	return utils.SendResponse(c, http.StatusOK, map[string]any{
+		"status": "success",
+	})
 }

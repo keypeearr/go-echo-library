@@ -1,46 +1,40 @@
 -- name: GetBooks :many
-SELECT
-    *
-FROM
-    books
-LIMIT
-    ?
-OFFSET
-    ?;
+select *
+from books
+limit ?
+offset ?
+;
 
 -- name: GetBookById :one
-SELECT
-    *
-FROM
-    books
-WHERE
-    id = ?;
+select *
+from books
+where id = ?
+;
 
 -- name: GetBooksCount :one
-SELECT
-    COUNT(*)
-FROM
-    books;
+select count(*)
+from books
+;
+
+-- name: GetBookByIsbn :one
+select *
+from books
+where isbn = ?
+;
 
 -- name: GetBooksCountByAuthor :one
-SELECT
-    COUNT(*)
-FROM
-    books
-WHERE
-    author_id = ?;
+select count(*)
+from books
+where author_id = ?
+;
 
 -- name: GetBooksByAuthor :many
-SELECT
-    *
-FROM
-    books
-WHERE
-    author_id = ?
-LIMIT
-    ?
-OFFSET
-    ?;
+select *
+from books
+where author_id = ?
+limit ?
+offset ?
+;
 
 -- name: CreateBook :exec
 INSERT INTO books (
@@ -83,6 +77,6 @@ RETURNING
     *;
 
 -- name: DeleteBook :exec
-DELETE FROM books
-WHERE
-    id = ?;
+delete from books
+where id = ?
+;
